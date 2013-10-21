@@ -11,6 +11,7 @@ define('ROLE_MANAGE_DOCUMENT', 'manage document');
 define('VOC_DOCUMENT_TYPE', 'document_type');
 define('VOC_DOCUMENT_STATUS', 'document_status');
 define('VOC_DOCUMENT_SUBMITTER', 'document_submitter');
+define('VOC_DOCUMENT_THREATS', 'threats');
 
 define('TYPE_PLAN', 'Plan');
 define('TYPE_NATIONAL_REPORT', 'National report');
@@ -81,16 +82,6 @@ function document_node_view($node, $view_mode, $langcode) {
 function document_entity_view($entity, $type, $view_mode, $langcode){
     if($view_mode == 'full' && $type == 'node'){
         $node = node_load($entity->nid);
-        if (node_is_page($node)) {
-            $fields = CMSDocument::$related_fields;
-            foreach ($fields as $related_content => $field) {
-                 if (!empty($node->{$field}) && isset($node->{$field}[$node->language])) {
-                    $content = $entity->content[$field]['#items'];
-                    $published_contents = CMSUtils::get_published_content($content);
-                    $entity->content[$field]['#items'] = $published_contents;
-                 }
-             }
-        }
 
         // Inject the meetings into the country profile page
         switch ($entity->type) {
@@ -142,45 +133,39 @@ function _documents_get_documents_render($node, $view_mode, $datatype, $theme, $
     ) + $documents;
 }
 
-
 /**
  * Implements hook_form_alter();
 */
 function document_form_alter(&$form, &$form_state, $form_id) {
     switch ($form_id) {
         case 'document_node_form' :
+            $form['field_document_publish_date']['#disabled'] = TRUE;
+
             $breadcrumb = array();
             $breadcrumb[] = l(t('Home'), '<front>');
             $breadcrumb[] = l(t('Documents'), 'document/listing');
             if (isset($form['nid']) && (is_numeric($form['nid']['#value']))) {
                 $breadcrumb[] = l($form['#node']->title, 'node/' . $form['#node']->nid);
             }
-
             drupal_set_breadcrumb($breadcrumb);
-
+            $path = drupal_get_path('theme', 'cms_theme');
+            drupal_add_js("$path/js/document.js");
+            break;
         case 'views_exposed_form':
             if (arg(0) == 'document') {
                 $path = drupal_get_path('theme', 'cms_theme');
                 drupal_add_js("$path/js/form.js");
 
                 $form['#tree'] = TRUE;
-
                 $instruments[''] = t('Any');
                 $instruments = $instruments + CMSLegalInstrument::get_mapped_instruments($title_as_key = FALSE);
                 $instruments_ids = array_keys($instruments);
-
-                if (isset($_GET['field_document_instrument_target_id']) && (in_array($_GET['field_document_instrument_target_id'], $instruments_ids))) {
-                    $instrument_selected = $_GET['field_document_instrument_target_id'];
-                } else {
-                    $instrument_selected = '';
-                }
 
                 $form['field_document_instrument_target_id'] = array(
                     '#type' => 'select',
                     '#prefix' => '<div id="dropdown-family-replace">',
                     '#suffix' => '</div>',
                     '#options' => $instruments,
-                    '#default_value' => $instrument_selected,
                 );
 
                 $breadcrumb = array();
@@ -206,6 +191,9 @@ function document_node_presave($node) {
     if ($node->type == 'document') {
         if (property_exists($node, 'nid') && $node->nid && (!property_exists($node, 'content_relation') || $node->content_relation != FALSE)) {
             CMSDocument::update_content_relation($node, CMSDocument::$related_fields, CMSDocument::$bundle);
+        }
+        if (arg(0) == 'node' && is_numeric(arg(1)) && arg(1) == $node->nid) {
+            CMSDocument::set_pub_date($node);
         }
     }
 }
@@ -267,6 +255,29 @@ function document_node_load($nodes, $types) {
                         'access' => TRUE
                     );
                 }
+            case CMSDocument::$bundle:
+                // Filter out the unpublished nodes from the related content
+                if (arg(0) == 'node' && is_numeric(arg(1)) && arg(1)==$node->nid) {
+                    $fields = CMSDocument::$related_fields;
+                    foreach ($fields as $related_content => $field) {
+                         if (!empty($node->{$field}) && isset($node->{$field}[$node->language])) {
+                            $content = $node->{$field}[$node->language];
+                            $published_contents = CMSUtils::get_published_nodes($content);
+                            $node->{$field}[$node->language] = $published_contents;
+                         }
+                    }
+                    $fields = CMSDocument::$false_related_fields;
+                    foreach ($fields as $field_related => $type) {
+                         if (!empty($node->{$field_related}) && isset($node->{$field_related}[$node->language])) {
+                            $content = $node->{$field_related}[$node->language];
+                            $published_contents = CMSUtils::get_published_nodes($content);
+                            $node->{$field_related}[$node->language] = $published_contents;
+                         }
+                    }
+
+                }
+                break;
+
             default: break;
         }
     }
@@ -289,6 +300,9 @@ class CMSDocument extends CMSBase {
         'meeting' => 'field_document_meeting',
         'project' => 'field_document_project',
         'publication' => 'field_document_publication',
+    );
+
+    static $false_related_fields = array(
     );
 
     /**
@@ -366,6 +380,41 @@ class CMSDocument extends CMSBase {
         }
         return $ret;
     }
+    /**
+     * Set field_document_publish_date with earliest date from attachements
+     * WARNING - just sets the date, doesn't save the node
+     *
+     * @param node $node Drupal document node
+     *
+     * @return bool  if any modification has been made
+     **/
+    public static function set_pub_date(&$node)
+    {
+        $modified = FALSE;
+        if(!empty($node->field_document_files)){
+            if (!empty($node->field_document_publish_date[$node->language][0]['value'])) {
+                $min_date = $node->field_document_publish_date[$node->language][0]['value'];
+            } else {
+                $min_date = date('Y-m-d H:i:s',strtotime('+10 year',time()));
+            }
+            if (!empty($node->field_document_files[$node->language])) {
+                foreach ($node->field_document_files[$node->language] as $field) {
+                    if (!empty($field['value'])) {
+                        $file = entity_load_single('field_collection_item',$field['value']);
+                        $date = $file->field_document_file_publish_date[$node->language][0]['value'];
+                        if (!empty($date) && strtotime($min_date) > strtotime($date)) {
+                            $min_date = $file->field_document_file_publish_date[$node->language][0]['value'];
+                            $modified = TRUE;
+                        }
+                    }
+                }
+                if ($modified) {
+                    $node->field_document_publish_date[$node->language][0]['value'] = $min_date;
+                }
+            }
+        }
+        return $modified;
+    }
 
 
     /**
@@ -391,10 +440,9 @@ class CMSDocument extends CMSBase {
         if (!empty($data['uuid'])) {
             $node->uuid = $data['uuid'];
         }
-        if (!empty($data['status'])) {
+        if (isset($data['status']) && in_array($data['status'],array(0,1))) {
             $node->status = $data['status'];
         }
-
         self::set_field_single_value($node, 'field_document_number', $data);
         self::set_field_single_value($node, 'field_document_publish_date', $data);
         if (isset($data['field_document_type'])) {
@@ -407,6 +455,13 @@ class CMSDocument extends CMSBase {
 
         self::set_field_taxonomic_term($node, 'field_document_status', VOC_DOCUMENT_STATUS, $data);
         self::set_field_taxonomic_term($node, 'field_document_submitted_by', VOC_DOCUMENT_SUBMITTER, $data);
+        if (isset($data['field_document_threats'])) {
+            if (is_array($data['field_document_threats'])) {
+                self::set_field_taxonomic_terms($node, 'field_document_threats', VOC_DOCUMENT_THREATS, $data);
+            }else {
+                self::set_field_taxonomic_term($node, 'field_document_threats', VOC_DOCUMENT_THREATS, $data);
+            }
+        }
         $instrument['field_document_instrument'] = array($data['field_document_instrument']);
         self::set_field_instruments($node, 'field_document_instrument', $instrument);
 
@@ -423,7 +478,10 @@ class CMSDocument extends CMSBase {
                         CMSUtils::println("CMSBase::set_field_taxonomic_term: Cannot find term %s", $document['field_document_file_language']);
                     }
                 } else {
-                    CMSUtils::println("CMSBase::set_field_taxonomic_term: Cannot find field name %s in data array", 'field_document_file_language');
+                    CMSUtils::println("Notification: field_document_file_language is not set for file %s", $document['field_document_file']);
+                }
+                if(!empty($document['field_document_file_publish_date'])) {
+                    $c['field_document_file_publish_date'][$node->language][0]['value'] = $document['field_document_file_publish_date'];
                 }
                 $entity = entity_create('field_collection_item', $c);
                 $entity->field_name = 'field_document_files';
@@ -447,12 +505,13 @@ class CMSDocument extends CMSBase {
             'uuid' => CMSUtils::get_node_uuid($node)
         );
         self::get_field_single_value($node, 'field_document_number', $ret);
-        $ret['field_document_type'] = self::get_field_taxonomic_term_name($node, 'field_document_type', VOC_DOCUMENT_TYPE);
+        $ret['field_document_type'] = self::get_field_taxonomic_terms_names($node, 'field_document_type', VOC_DOCUMENT_TYPE);
         $ret['field_document_status'] = self::get_field_taxonomic_term_name($node, 'field_document_status', VOC_DOCUMENT_STATUS);
         self::get_field_single_value($node, 'field_document_publish_date', $ret);
         $ret['field_document_instrument'] = self::get_field_instrument_name($node, 'field_document_instrument');
-        $ret['field_document_submitter'] = self::get_field_taxonomic_term_name($node, 'field_document_submitted_by', VOC_DOCUMENT_SUBMITTER);
+        $ret['field_document_submitted_by'] = self::get_field_taxonomic_term_name($node, 'field_document_submitted_by', VOC_DOCUMENT_SUBMITTER);
         $ret['field_document_files'] = self::export_document_files($node, $export_base_dir);
+        $ret['field_document_threats'] = self::get_field_taxonomic_terms_names($node, 'field_document_threats', VOC_DOCUMENT_THREATS);
 
         foreach(self::$related_fields as $field_name) {
             $ret[$field_name] = self::get_entity_reference_by_uuid($node, $field_name);
@@ -486,6 +545,7 @@ class CMSDocument extends CMSBase {
                         'description' => (!empty($file['description'])) ? $file['description'] : '',
                         'md5' => md5_file($dest),
                         'uuid' => (!empty($file['uuid'])) ? $file['uuid'] : '',
+
                     );
                     if(!empty($file['title'])) { // For images
                         $arr['title'] = $file['title'];
@@ -495,6 +555,9 @@ class CMSDocument extends CMSBase {
 
                     if (isset($field_collection[$field['value']]->field_document_file_language) && (!empty($field_collection[$field['value']]->field_document_file_language))) {
                         $ret[$index]['field_document_file_language'] = self::get_field_taxonomic_term_name($field_collection[$field['value']], 'field_document_file_language', VOC_LANGUAGES, $node->language);
+                    }
+                    if (isset($field_collection[$field['value']]->field_document_file_publish_date) && (!empty($field_collection[$field['value']]->field_document_file_publish_date))) {
+                        $ret[$index]['field_document_file_publish_date'] = self::get_field_single_value($field_collection[$field['value']], 'field_document_file_publish_date', $ret[$index]);
                     }
                 }
             }

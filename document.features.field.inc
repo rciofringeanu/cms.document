@@ -621,20 +621,17 @@ function document_field_default_fields() {
       'locked' => '0',
       'module' => 'entityreference',
       'settings' => array(
-        'handler' => 'base',
+        'handler' => 'views',
         'handler_settings' => array(
           'behaviors' => array(
             'views-select-list' => array(
               'status' => 0,
             ),
           ),
-          'sort' => array(
-            'direction' => 'ASC',
-            'property' => 'title',
-            'type' => 'property',
-          ),
-          'target_bundles' => array(
-            'publication' => 'publication',
+          'view' => array(
+            'args' => array(),
+            'display_name' => 'entityreference_1',
+            'view_name' => 'available_publications',
           ),
         ),
         'target_type' => 'node',
@@ -714,7 +711,7 @@ function document_field_default_fields() {
     'field_instance' => array(
       'bundle' => 'document',
       'deleted' => '0',
-      'description' => '',
+      'description' => 'Auto-filled with earliest date from attachments\' published date',
       'display' => array(
         'default' => array(
           'label' => 'inline',

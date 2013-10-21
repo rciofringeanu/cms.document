@@ -23,12 +23,14 @@ function document_views_default_views() {
   /* Display: Master */
   $handler = $view->new_display('default', 'Master', 'default');
   $handler->display->display_options['title'] = 'Documents';
+  $handler->display->display_options['group_by'] = TRUE;
   $handler->display->display_options['access']['type'] = 'role';
   $handler->display->display_options['access']['role'] = array(
     2 => 2,
   );
   $handler->display->display_options['cache']['type'] = 'none';
   $handler->display->display_options['query']['type'] = 'views_query';
+  $handler->display->display_options['query']['options']['distinct'] = TRUE;
   $handler->display->display_options['query']['options']['query_comment'] = FALSE;
   $handler->display->display_options['exposed_form']['type'] = 'basic';
   $handler->display->display_options['exposed_form']['options']['submit_button'] = 'Search';
@@ -46,7 +48,7 @@ function document_views_default_views() {
     'field_document_instrument' => 'field_document_instrument',
     'field_document_type' => 'field_document_type',
   );
-  $handler->display->display_options['style_options']['default'] = 'field_document_publish_date';
+  $handler->display->display_options['style_options']['default'] = 'field_document_number';
   $handler->display->display_options['style_options']['info'] = array(
     'field_document_number' => array(
       'sortable' => 1,
@@ -64,7 +66,7 @@ function document_views_default_views() {
     ),
     'field_document_publish_date' => array(
       'sortable' => 0,
-      'default_sort_order' => 'desc',
+      'default_sort_order' => 'asc',
       'align' => '',
       'separator' => '',
       'empty_column' => 0,
@@ -89,7 +91,7 @@ function document_views_default_views() {
     'save_state' => 0,
   );
   $handler->display->display_options['style_options']['layout'] = array(
-    'autowidth' => 1,
+    'autowidth' => 0,
     'themeroller' => 0,
     'sdom' => '',
   );
@@ -295,7 +297,7 @@ function document_views_default_views() {
   $handler->display->display_options['filters']['field_document_type_tid']['expose']['operator'] = 'field_document_type_tid_op';
   $handler->display->display_options['filters']['field_document_type_tid']['expose']['identifier'] = 'field_document_type_tid';
   $handler->display->display_options['filters']['field_document_type_tid']['expose']['reduce'] = 0;
-  $handler->display->display_options['filters']['field_document_type_tid']['reduce_duplicates'] = 0;
+  $handler->display->display_options['filters']['field_document_type_tid']['reduce_duplicates'] = 1;
   $handler->display->display_options['filters']['field_document_type_tid']['type'] = 'select';
   $handler->display->display_options['filters']['field_document_type_tid']['vocabulary'] = 'document_type';
   $handler->display->display_options['filters']['field_document_type_tid']['hierarchy'] = 1;
@@ -304,6 +306,9 @@ function document_views_default_views() {
   /* Display: Page */
   $handler = $view->new_display('page', 'Page', 'page');
   $handler->display->display_options['path'] = 'document/listing';
+
+  /* Display: Data export */
+  $handler = $view->new_display('views_data_export', 'Data export', 'document_export');
   $translatables['documents'] = array(
     t('Master'),
     t('Documents'),
@@ -324,6 +329,7 @@ function document_views_default_views() {
     t('CMS Instrument'),
     t('Type'),
     t('Page'),
+    t('Data export'),
   );
   $export['documents'] = $view;
 
