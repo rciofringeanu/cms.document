@@ -2,7 +2,7 @@ name = Document
 core = 7.x
 package = CMS
 php = 5.2.4
-version = 7.x-2.0-alpha1
+version = 7.x-2.0-beta1
 
 dependencies[] = legal_instrument
 
