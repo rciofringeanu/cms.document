@@ -10,7 +10,7 @@
 function document_views_default_views() {
   $export = array();
 
-  $view = new view;
+  $view = new view();
   $view->name = 'documents';
   $view->description = '';
   $view->tag = 'default';
@@ -23,6 +23,7 @@ function document_views_default_views() {
   /* Display: Master */
   $handler = $view->new_display('default', 'Master', 'default');
   $handler->display->display_options['title'] = 'Documents';
+  $handler->display->display_options['use_more_always'] = FALSE;
   $handler->display->display_options['group_by'] = TRUE;
   $handler->display->display_options['access']['type'] = 'role';
   $handler->display->display_options['access']['role'] = array(
@@ -36,8 +37,6 @@ function document_views_default_views() {
   $handler->display->display_options['exposed_form']['options']['submit_button'] = 'Search';
   $handler->display->display_options['exposed_form']['options']['reset_button'] = TRUE;
   $handler->display->display_options['exposed_form']['options']['reset_button_label'] = 'Clear filters';
-  $handler->display->display_options['exposed_form']['options']['autosubmit'] = 0;
-  $handler->display->display_options['exposed_form']['options']['autosubmit_hide'] = 1;
   $handler->display->display_options['pager']['type'] = 'full';
   $handler->display->display_options['pager']['options']['items_per_page'] = '10';
   $handler->display->display_options['style_plugin'] = 'datatables';
@@ -84,7 +83,7 @@ function document_views_default_views() {
       'empty_column' => 0,
     ),
   );
-  $handler->display->display_options['style_options']['empty_table'] = 1;
+  $handler->display->display_options['style_options']['empty_table'] = TRUE;
   $handler->display->display_options['style_options']['elements'] = array(
     'search_box' => 1,
     'table_info' => 1,
@@ -107,80 +106,24 @@ function document_views_default_views() {
   $handler->display->display_options['relationships']['field_document_type_tid']['id'] = 'field_document_type_tid';
   $handler->display->display_options['relationships']['field_document_type_tid']['table'] = 'field_data_field_document_type';
   $handler->display->display_options['relationships']['field_document_type_tid']['field'] = 'field_document_type_tid';
-  $handler->display->display_options['relationships']['field_document_type_tid']['required'] = 0;
   /* Relationship: Entity Reference: Referenced Entity */
   $handler->display->display_options['relationships']['field_document_instrument_target_id']['id'] = 'field_document_instrument_target_id';
   $handler->display->display_options['relationships']['field_document_instrument_target_id']['table'] = 'field_data_field_document_instrument';
   $handler->display->display_options['relationships']['field_document_instrument_target_id']['field'] = 'field_document_instrument_target_id';
-  $handler->display->display_options['relationships']['field_document_instrument_target_id']['required'] = 0;
   /* Field: Content: Number */
   $handler->display->display_options['fields']['field_document_number']['id'] = 'field_document_number';
   $handler->display->display_options['fields']['field_document_number']['table'] = 'field_data_field_document_number';
   $handler->display->display_options['fields']['field_document_number']['field'] = 'field_document_number';
-  $handler->display->display_options['fields']['field_document_number']['alter']['alter_text'] = 0;
-  $handler->display->display_options['fields']['field_document_number']['alter']['make_link'] = 0;
-  $handler->display->display_options['fields']['field_document_number']['alter']['absolute'] = 0;
-  $handler->display->display_options['fields']['field_document_number']['alter']['external'] = 0;
-  $handler->display->display_options['fields']['field_document_number']['alter']['replace_spaces'] = 0;
-  $handler->display->display_options['fields']['field_document_number']['alter']['trim_whitespace'] = 0;
-  $handler->display->display_options['fields']['field_document_number']['alter']['nl2br'] = 0;
-  $handler->display->display_options['fields']['field_document_number']['alter']['word_boundary'] = 1;
-  $handler->display->display_options['fields']['field_document_number']['alter']['ellipsis'] = 1;
-  $handler->display->display_options['fields']['field_document_number']['alter']['more_link'] = 0;
-  $handler->display->display_options['fields']['field_document_number']['alter']['strip_tags'] = 0;
-  $handler->display->display_options['fields']['field_document_number']['alter']['trim'] = 0;
-  $handler->display->display_options['fields']['field_document_number']['alter']['html'] = 0;
-  $handler->display->display_options['fields']['field_document_number']['element_label_colon'] = 1;
-  $handler->display->display_options['fields']['field_document_number']['element_default_classes'] = 1;
-  $handler->display->display_options['fields']['field_document_number']['hide_empty'] = 0;
-  $handler->display->display_options['fields']['field_document_number']['empty_zero'] = 0;
-  $handler->display->display_options['fields']['field_document_number']['hide_alter_empty'] = 1;
-  $handler->display->display_options['fields']['field_document_number']['field_api_classes'] = 0;
   /* Field: Content: Title */
   $handler->display->display_options['fields']['title']['id'] = 'title';
   $handler->display->display_options['fields']['title']['table'] = 'node';
   $handler->display->display_options['fields']['title']['field'] = 'title';
-  $handler->display->display_options['fields']['title']['alter']['alter_text'] = 0;
-  $handler->display->display_options['fields']['title']['alter']['make_link'] = 0;
-  $handler->display->display_options['fields']['title']['alter']['absolute'] = 0;
-  $handler->display->display_options['fields']['title']['alter']['external'] = 0;
-  $handler->display->display_options['fields']['title']['alter']['replace_spaces'] = 0;
-  $handler->display->display_options['fields']['title']['alter']['trim_whitespace'] = 0;
-  $handler->display->display_options['fields']['title']['alter']['nl2br'] = 0;
-  $handler->display->display_options['fields']['title']['alter']['word_boundary'] = 0;
-  $handler->display->display_options['fields']['title']['alter']['ellipsis'] = 0;
-  $handler->display->display_options['fields']['title']['alter']['more_link'] = 0;
-  $handler->display->display_options['fields']['title']['alter']['strip_tags'] = 0;
-  $handler->display->display_options['fields']['title']['alter']['trim'] = 0;
-  $handler->display->display_options['fields']['title']['alter']['html'] = 0;
-  $handler->display->display_options['fields']['title']['element_label_colon'] = 1;
-  $handler->display->display_options['fields']['title']['element_default_classes'] = 1;
-  $handler->display->display_options['fields']['title']['hide_empty'] = 0;
-  $handler->display->display_options['fields']['title']['empty_zero'] = 0;
-  $handler->display->display_options['fields']['title']['hide_alter_empty'] = 1;
-  $handler->display->display_options['fields']['title']['link_to_node'] = 1;
+  $handler->display->display_options['fields']['title']['alter']['word_boundary'] = FALSE;
+  $handler->display->display_options['fields']['title']['alter']['ellipsis'] = FALSE;
   /* Field: Content: Publish date */
   $handler->display->display_options['fields']['field_document_publish_date']['id'] = 'field_document_publish_date';
   $handler->display->display_options['fields']['field_document_publish_date']['table'] = 'field_data_field_document_publish_date';
   $handler->display->display_options['fields']['field_document_publish_date']['field'] = 'field_document_publish_date';
-  $handler->display->display_options['fields']['field_document_publish_date']['alter']['alter_text'] = 0;
-  $handler->display->display_options['fields']['field_document_publish_date']['alter']['make_link'] = 0;
-  $handler->display->display_options['fields']['field_document_publish_date']['alter']['absolute'] = 0;
-  $handler->display->display_options['fields']['field_document_publish_date']['alter']['external'] = 0;
-  $handler->display->display_options['fields']['field_document_publish_date']['alter']['replace_spaces'] = 0;
-  $handler->display->display_options['fields']['field_document_publish_date']['alter']['trim_whitespace'] = 0;
-  $handler->display->display_options['fields']['field_document_publish_date']['alter']['nl2br'] = 0;
-  $handler->display->display_options['fields']['field_document_publish_date']['alter']['word_boundary'] = 1;
-  $handler->display->display_options['fields']['field_document_publish_date']['alter']['ellipsis'] = 1;
-  $handler->display->display_options['fields']['field_document_publish_date']['alter']['more_link'] = 0;
-  $handler->display->display_options['fields']['field_document_publish_date']['alter']['strip_tags'] = 0;
-  $handler->display->display_options['fields']['field_document_publish_date']['alter']['trim'] = 0;
-  $handler->display->display_options['fields']['field_document_publish_date']['alter']['html'] = 0;
-  $handler->display->display_options['fields']['field_document_publish_date']['element_label_colon'] = 1;
-  $handler->display->display_options['fields']['field_document_publish_date']['element_default_classes'] = 1;
-  $handler->display->display_options['fields']['field_document_publish_date']['hide_empty'] = 0;
-  $handler->display->display_options['fields']['field_document_publish_date']['empty_zero'] = 0;
-  $handler->display->display_options['fields']['field_document_publish_date']['hide_alter_empty'] = 1;
   $handler->display->display_options['fields']['field_document_publish_date']['settings'] = array(
     'format_type' => 'cms_date',
     'fromto' => 'both',
@@ -188,61 +131,20 @@ function document_views_default_views() {
     'multiple_from' => '',
     'multiple_to' => '',
   );
-  $handler->display->display_options['fields']['field_document_publish_date']['field_api_classes'] = 0;
   /* Field: Content: CMS Instrument */
   $handler->display->display_options['fields']['field_document_instrument']['id'] = 'field_document_instrument';
   $handler->display->display_options['fields']['field_document_instrument']['table'] = 'field_data_field_document_instrument';
   $handler->display->display_options['fields']['field_document_instrument']['field'] = 'field_document_instrument';
-  $handler->display->display_options['fields']['field_document_instrument']['alter']['alter_text'] = 0;
-  $handler->display->display_options['fields']['field_document_instrument']['alter']['make_link'] = 0;
-  $handler->display->display_options['fields']['field_document_instrument']['alter']['absolute'] = 0;
-  $handler->display->display_options['fields']['field_document_instrument']['alter']['external'] = 0;
-  $handler->display->display_options['fields']['field_document_instrument']['alter']['replace_spaces'] = 0;
-  $handler->display->display_options['fields']['field_document_instrument']['alter']['trim_whitespace'] = 0;
-  $handler->display->display_options['fields']['field_document_instrument']['alter']['nl2br'] = 0;
-  $handler->display->display_options['fields']['field_document_instrument']['alter']['word_boundary'] = 1;
-  $handler->display->display_options['fields']['field_document_instrument']['alter']['ellipsis'] = 1;
-  $handler->display->display_options['fields']['field_document_instrument']['alter']['more_link'] = 0;
-  $handler->display->display_options['fields']['field_document_instrument']['alter']['strip_tags'] = 0;
-  $handler->display->display_options['fields']['field_document_instrument']['alter']['trim'] = 0;
-  $handler->display->display_options['fields']['field_document_instrument']['alter']['html'] = 0;
-  $handler->display->display_options['fields']['field_document_instrument']['element_label_colon'] = 1;
-  $handler->display->display_options['fields']['field_document_instrument']['element_default_classes'] = 1;
-  $handler->display->display_options['fields']['field_document_instrument']['hide_empty'] = 0;
-  $handler->display->display_options['fields']['field_document_instrument']['empty_zero'] = 0;
-  $handler->display->display_options['fields']['field_document_instrument']['hide_alter_empty'] = 1;
   $handler->display->display_options['fields']['field_document_instrument']['settings'] = array(
     'link' => 0,
   );
-  $handler->display->display_options['fields']['field_document_instrument']['field_api_classes'] = 0;
   /* Field: Content: Type */
   $handler->display->display_options['fields']['field_document_type']['id'] = 'field_document_type';
   $handler->display->display_options['fields']['field_document_type']['table'] = 'field_data_field_document_type';
   $handler->display->display_options['fields']['field_document_type']['field'] = 'field_document_type';
-  $handler->display->display_options['fields']['field_document_type']['alter']['alter_text'] = 0;
-  $handler->display->display_options['fields']['field_document_type']['alter']['make_link'] = 0;
-  $handler->display->display_options['fields']['field_document_type']['alter']['absolute'] = 0;
-  $handler->display->display_options['fields']['field_document_type']['alter']['external'] = 0;
-  $handler->display->display_options['fields']['field_document_type']['alter']['replace_spaces'] = 0;
-  $handler->display->display_options['fields']['field_document_type']['alter']['trim_whitespace'] = 0;
-  $handler->display->display_options['fields']['field_document_type']['alter']['nl2br'] = 0;
-  $handler->display->display_options['fields']['field_document_type']['alter']['word_boundary'] = 1;
-  $handler->display->display_options['fields']['field_document_type']['alter']['ellipsis'] = 1;
-  $handler->display->display_options['fields']['field_document_type']['alter']['more_link'] = 0;
-  $handler->display->display_options['fields']['field_document_type']['alter']['strip_tags'] = 0;
-  $handler->display->display_options['fields']['field_document_type']['alter']['trim'] = 0;
-  $handler->display->display_options['fields']['field_document_type']['alter']['html'] = 0;
-  $handler->display->display_options['fields']['field_document_type']['element_label_colon'] = 0;
-  $handler->display->display_options['fields']['field_document_type']['element_default_classes'] = 1;
-  $handler->display->display_options['fields']['field_document_type']['hide_empty'] = 0;
-  $handler->display->display_options['fields']['field_document_type']['empty_zero'] = 0;
-  $handler->display->display_options['fields']['field_document_type']['hide_alter_empty'] = 1;
+  $handler->display->display_options['fields']['field_document_type']['element_label_colon'] = FALSE;
   $handler->display->display_options['fields']['field_document_type']['type'] = 'taxonomy_term_reference_plain';
-  $handler->display->display_options['fields']['field_document_type']['group_rows'] = 1;
   $handler->display->display_options['fields']['field_document_type']['delta_offset'] = '0';
-  $handler->display->display_options['fields']['field_document_type']['delta_reversed'] = 0;
-  $handler->display->display_options['fields']['field_document_type']['delta_first_last'] = 0;
-  $handler->display->display_options['fields']['field_document_type']['field_api_classes'] = 0;
   /* Sort criterion: Taxonomy term: Name */
   $handler->display->display_options['sorts']['name']['id'] = 'name';
   $handler->display->display_options['sorts']['name']['table'] = 'taxonomy_term_data';
@@ -286,7 +188,6 @@ function document_views_default_views() {
   $handler->display->display_options['filters']['field_document_instrument_target_id']['expose']['label'] = 'CMS Instrument';
   $handler->display->display_options['filters']['field_document_instrument_target_id']['expose']['operator'] = 'field_document_instrument_target_id_op';
   $handler->display->display_options['filters']['field_document_instrument_target_id']['expose']['identifier'] = 'field_document_instrument_target_id';
-  $handler->display->display_options['filters']['field_document_instrument_target_id']['expose']['multiple'] = FALSE;
   /* Filter criterion: Content: Type (field_document_type) */
   $handler->display->display_options['filters']['field_document_type_tid']['id'] = 'field_document_type_tid';
   $handler->display->display_options['filters']['field_document_type_tid']['table'] = 'field_data_field_document_type';
@@ -296,41 +197,21 @@ function document_views_default_views() {
   $handler->display->display_options['filters']['field_document_type_tid']['expose']['label'] = 'Type';
   $handler->display->display_options['filters']['field_document_type_tid']['expose']['operator'] = 'field_document_type_tid_op';
   $handler->display->display_options['filters']['field_document_type_tid']['expose']['identifier'] = 'field_document_type_tid';
-  $handler->display->display_options['filters']['field_document_type_tid']['expose']['reduce'] = 0;
-  $handler->display->display_options['filters']['field_document_type_tid']['reduce_duplicates'] = 1;
+  $handler->display->display_options['filters']['field_document_type_tid']['reduce_duplicates'] = TRUE;
   $handler->display->display_options['filters']['field_document_type_tid']['type'] = 'select';
   $handler->display->display_options['filters']['field_document_type_tid']['vocabulary'] = 'document_type';
   $handler->display->display_options['filters']['field_document_type_tid']['hierarchy'] = 1;
-  $handler->display->display_options['filters']['field_document_type_tid']['error_message'] = 0;
+  $handler->display->display_options['filters']['field_document_type_tid']['error_message'] = FALSE;
 
   /* Display: Page */
   $handler = $view->new_display('page', 'Page', 'page');
-  $handler->display->display_options['path'] = 'document/listing';
+  $handler->display->display_options['path'] = 'manage/document/listing';
 
   /* Display: Data export */
   $handler = $view->new_display('views_data_export', 'Data export', 'document_export');
-  $translatables['documents'] = array(
-    t('Master'),
-    t('Documents'),
-    t('more'),
-    t('Search'),
-    t('Clear filters'),
-    t('Sort by'),
-    t('Asc'),
-    t('Desc'),
-    t('Items per page'),
-    t('- All -'),
-    t('Offset'),
-    t('term from field_document_type'),
-    t('Content entity referenced from field_document_instrument'),
-    t('Number'),
-    t('Title'),
-    t('Publish date'),
-    t('CMS Instrument'),
-    t('Type'),
-    t('Page'),
-    t('Data export'),
-  );
+  $handler->display->display_options['pager']['type'] = 'some';
+  $handler->display->display_options['style_plugin'] = 'views_data_export_csv';
+  $handler->display->display_options['path'] = 'document/export';
   $export['documents'] = $view;
 
   return $export;
