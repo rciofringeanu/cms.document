@@ -1,4 +1,4 @@
-name = Document
+name = "CMS Document"
 core = 7.x
 package = CMS
 version = 7.x-2.0-beta2
