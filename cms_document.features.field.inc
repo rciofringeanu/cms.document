@@ -7,7 +7,7 @@
 /**
  * Implements hook_field_default_fields().
  */
-function document_field_default_fields() {
+function cms_document_field_default_fields() {
   $fields = array();
 
   // Exported field: 'field_collection_item-field_document_files-field_document_file'.

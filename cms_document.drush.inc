@@ -1,6 +1,6 @@
 <?php
 
-function document_drush_command() {
+function cms_document_drush_command() {
     $items['doc_change_published_date'] = array(
         'description' => 'Changes all the documents published date with earliest date from attachments',
         'examples' => array('drush doc_change_published_date' => 'Changes all the documents published date with earliest date from attachments'),

@@ -7,7 +7,7 @@
 /**
  * Implements hook_field_default_field_instances().
  */
-function document_field_default_field_instances() {
+function cms_document_field_default_field_instances() {
   $field_instances = array();
 
   // Exported field_instance: 'field_collection_item-field_document_files-field_document_file'

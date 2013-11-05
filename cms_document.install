@@ -6,7 +6,7 @@ include_once drupal_get_path('module', 'cms') . '/utils.php';
 /**
  * Implements hook_uninstall()
  */
-function document_uninstall() {
+function cms_document_uninstall() {
     user_role_delete(ROLE_MANAGE_DOCUMENT);
 
     CMSUtils::vocabulary_delete(VOC_DOCUMENT_STATUS);
@@ -16,7 +16,7 @@ function document_uninstall() {
     CMSUtils::remove_menu_and_submenu('main-menu', 'Documents', '<front>');
 }
 
-function document_install () {
+function cms_document_install () {
     $role = CMSUtils::get_or_create_role(ROLE_MANAGE_DOCUMENT);
 
     CMSUtils::vocabulary_create('Document type vocabulary', VOC_DOCUMENT_TYPE);
@@ -50,7 +50,7 @@ function document_install () {
     }
 }
 
-function document_update_7001() {
+function cms_document_update_7001() {
     $role = CMSUtils::get_or_create_role(ROLE_MANAGE_DOCUMENT);
 
     $rid = $role->rid;

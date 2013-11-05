@@ -7,7 +7,7 @@
 /**
  * Implements hook_ctools_plugin_api().
  */
-function document_ctools_plugin_api($module = NULL, $api = NULL) {
+function cms_document_ctools_plugin_api($module = NULL, $api = NULL) {
   if ($module == "strongarm" && $api == "strongarm") {
     return array("version" => "1");
   }
@@ -16,14 +16,14 @@ function document_ctools_plugin_api($module = NULL, $api = NULL) {
 /**
  * Implements hook_views_api().
  */
-function document_views_api($module = NULL, $api = NULL) {
+function cms_document_views_api($module = NULL, $api = NULL) {
   return array("api" => "3.0");
 }
 
 /**
  * Implements hook_node_info().
  */
-function document_node_info() {
+function cms_document_node_info() {
   $items = array(
     'document' => array(
       'name' => t('Document'),

@@ -7,7 +7,7 @@
 /**
  * Implements hook_views_default_views().
  */
-function document_views_default_views() {
+function cms_document_views_default_views() {
   $export = array();
 
   $view = new view();
