@@ -28,17 +28,17 @@ function cms_document_theme($existing, $type, $theme, $path) {
     );
     return array(
         'table__documents_template_instrument' => $base + array(
-            'variables' => array(
-                'header' => NULL,
-                'rows' => NULL,
-                'attributes' => array(),
-                'caption' => NULL,
-                'colgroups' => array(),
-                'sticky' => TRUE,
-                'empty' => '',
-                'settings' => array()
+                'variables' => array(
+                    'header' => NULL,
+                    'rows' => NULL,
+                    'attributes' => array(),
+                    'caption' => NULL,
+                    'colgroups' => array(),
+                    'sticky' => TRUE,
+                    'empty' => '',
+                    'settings' => array()
+                )
             )
-        )
     );
 }
 
@@ -60,7 +60,7 @@ function cms_document_views_default_views_alter(&$views) {
 
 /**
  * Implements hook_node_view();
-*/
+ */
 function cms_document_node_view($node, $view_mode, $langcode) {
     if(function_exists('cms_theme_node_access') && $node->type == CMSDocument::$bundle) {
         cms_theme_node_access($node);
@@ -135,7 +135,7 @@ function _documents_get_documents_render($node, $view_mode, $datatype, $theme, $
 
 /**
  * Implements hook_form_alter();
-*/
+ */
 function cms_document_form_alter(&$form, &$form_state, $form_id) {
     switch ($form_id) {
         case 'document_node_form' :
@@ -152,7 +152,7 @@ function cms_document_form_alter(&$form, &$form_state, $form_id) {
             drupal_add_js("$path/js/document.js");
             break;
         case 'views_exposed_form':
-            if (arg(0) == 'document') {
+            if ($form['#id'] == "views-exposed-form-documents-page") {
                 $path = drupal_get_path('theme', 'cms_theme');
                 drupal_add_js("$path/js/form.js");
 
@@ -260,19 +260,19 @@ function cms_document_node_load($nodes, $types) {
                 if (arg(0) == 'node' && is_numeric(arg(1)) && arg(1)==$node->nid) {
                     $fields = CMSDocument::$related_fields;
                     foreach ($fields as $related_content => $field) {
-                         if (!empty($node->{$field}) && isset($node->{$field}[$node->language])) {
+                        if (!empty($node->{$field}) && isset($node->{$field}[$node->language])) {
                             $content = $node->{$field}[$node->language];
                             $published_contents = CMSUtils::get_published_nodes($content);
                             $node->{$field}[$node->language] = $published_contents;
-                         }
+                        }
                     }
                     $fields = CMSDocument::$false_related_fields;
                     foreach ($fields as $field_related => $type) {
-                         if (!empty($node->{$field_related}) && isset($node->{$field_related}[$node->language])) {
+                        if (!empty($node->{$field_related}) && isset($node->{$field_related}[$node->language])) {
                             $content = $node->{$field_related}[$node->language];
                             $published_contents = CMSUtils::get_published_nodes($content);
                             $node->{$field_related}[$node->language] = $published_contents;
-                         }
+                        }
                     }
 
                 }
@@ -321,9 +321,9 @@ class CMSDocument extends CMSBase {
      */
     static function get_document_by_uid($uid) {
         $c = db_select('field_data_field_document_uid', 'a')
-                    ->fields('a', array('entity_id'))
-                    ->condition('a.field_document_uid_value', $uid)
-                    ->execute()->fetchObject();
+            ->fields('a', array('entity_id'))
+            ->condition('a.field_document_uid_value', $uid)
+            ->execute()->fetchObject();
         if($c) {
             return node_load($c->entity_id);
         }
