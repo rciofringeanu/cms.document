@@ -1,7 +1,7 @@
 name = "CMS Document"
 core = 7.x
 package = CMS
-version = 7.x-2.0-beta2
+version = 7.x-2.0
 project = cms_document
 dependencies[] = datatables
 dependencies[] = field_collection
