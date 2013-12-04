@@ -213,18 +213,9 @@ function _document_redirect_after_delete(&$form, &$form_state) {
 
 function cms_document_node_presave($node) {
     if ($node->type == 'document') {
-        if (property_exists($node, 'nid') && $node->nid && (!property_exists($node, 'content_relation') || $node->content_relation != FALSE)) {
-            CMSDocument::update_content_relation($node, CMSDocument::$related_fields, CMSDocument::$bundle);
-        }
         if (arg(0) == 'node' && is_numeric(arg(1)) && arg(1) == $node->nid) {
             CMSDocument::set_pub_date($node);
         }
-    }
-}
-
-function cms_document_node_insert($node) {
-    if ($node->type == 'document') {
-        CMSDocument::update_content_relation($node, CMSDocument::$related_fields, CMSDocument::$bundle);
     }
 }
 

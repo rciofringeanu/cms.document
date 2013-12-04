@@ -1,7 +1,7 @@
 <?php
 /**
  * @file
- * document.strongarm.inc
+ * cms_document.strongarm.inc
  */
 
 /**

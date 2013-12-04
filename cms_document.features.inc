@@ -1,7 +1,7 @@
 <?php
 /**
  * @file
- * document.features.inc
+ * cms_document.features.inc
  */
 
 /**
