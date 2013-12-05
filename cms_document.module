@@ -274,7 +274,7 @@ function cms_document_node_load($nodes, $types) {
                 // Filter out the unpublished nodes from the related content
                 if (arg(0) == 'node' && is_numeric(arg(1)) && arg(1)==$node->nid) {
                     $fields = CMSDocument::$related_fields;
-                    foreach ($fields as $related_content => $field) {
+                    foreach ($fields as $field) {
                         if (!empty($node->{$field}) && isset($node->{$field}[$node->language])) {
                             $content = $node->{$field}[$node->language];
                             $published_contents = CMSUtils::get_published_nodes($content);
@@ -413,16 +413,17 @@ class CMSDocument extends CMSBase {
                 $min_date = date('Y-m-d H:i:s',strtotime('+10 year',time()));
             }
             if (!empty($node->field_document_files[$node->language])) {
-                foreach ($node->field_document_files[$node->language] as $field) {
-                    if (!empty($field['value'])) {
-                        $file = entity_load_single('field_collection_item',$field['value']);
-                        $date = $file->field_document_file_publish_date[$node->language][0]['value'];
+
+                foreach ($node->field_document_files[$node->language] as $file) {
+                    if (!empty($file['field_document_file_publish_date'][$node->language][0]['value'])) {
+                        $date = $file['field_document_file_publish_date'][$node->language][0]['value'];
                         if (!empty($date) && strtotime($min_date) > strtotime($date)) {
-                            $min_date = $file->field_document_file_publish_date[$node->language][0]['value'];
+                            $min_date = $file['field_document_file_publish_date'][$node->language][0]['value'];
                             $modified = TRUE;
                         }
                     }
                 }
+
                 if ($modified) {
                     $node->field_document_publish_date[$node->language][0]['value'] = $min_date;
                 }
