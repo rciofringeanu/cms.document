@@ -15,6 +15,7 @@ define('VOC_DOCUMENT_THREATS', 'threats');
 
 define('TYPE_PLAN', 'Plan');
 define('TYPE_NATIONAL_REPORT', 'National report');
+define('FILTER_DOCUMENT_INSTRUMENT_FILTER', 'field_document_instrument_target_id');
 
 module_load_include('module', 'cms');
 
@@ -190,10 +191,11 @@ function cms_document_form_alter(&$form, &$form_state, $form_id) {
                         $current_instrument_id = $id;
                     }
                 }
-                $field = 'field_document_instrument_target_id';
-                $instrument_selected = (isset($_GET[$field]) && (in_array($_GET[$field], array_keys($instruments)))) ? $_GET[$field] : (string)$current_instrument_id;
+                $instrument_selected = (isset($_GET[FILTER_DOCUMENT_INSTRUMENT_FILTER])
+                    && (in_array($_GET[FILTER_DOCUMENT_INSTRUMENT_FILTER], array_keys($instruments))))
+                    ? $_GET[FILTER_DOCUMENT_INSTRUMENT_FILTER] : (string)$current_instrument_id;
 
-                $form['field_document_instrument_target_id'] = array(
+                $form[FILTER_DOCUMENT_INSTRUMENT_FILTER] = array(
                     '#type' => 'select',
                     '#prefix' => '<div id="dropdown-family-replace">',
                     '#suffix' => '</div>',
