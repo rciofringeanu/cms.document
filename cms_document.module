@@ -183,13 +183,22 @@ function cms_document_form_alter(&$form, &$form_state, $form_id) {
                 $form['#tree'] = TRUE;
                 $instruments[''] = t('Any');
                 $instruments = $instruments + CMSLegalInstrument::get_mapped_instruments($title_as_key = FALSE);
-                $instruments_ids = array_keys($instruments);
+
+                $current_profile = CMSUtils::get_current_profile();
+                foreach ($instruments as $id => $name) {
+                    if (strtolower($name) == $current_profile) {
+                        $current_instrument_id = $id;
+                    }
+                }
+                $field = 'field_document_instrument_target_id';
+                $instrument_selected = (isset($_GET[$field]) && (in_array($_GET[$field], array_keys($instruments)))) ? $_GET[$field] : (string)$current_instrument_id;
 
                 $form['field_document_instrument_target_id'] = array(
                     '#type' => 'select',
                     '#prefix' => '<div id="dropdown-family-replace">',
                     '#suffix' => '</div>',
                     '#options' => $instruments,
+                    '#value'    => $instrument_selected,
                 );
 
                 $breadcrumb = array();
