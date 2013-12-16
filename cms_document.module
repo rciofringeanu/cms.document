@@ -227,6 +227,14 @@ function cms_document_node_presave($node) {
         if ((arg(0) == 'node' && is_numeric(arg(1)) && arg(1) == $node->nid)
             || (arg(0) == 'node' && arg(1) == 'add' && arg(2) == 'document'))
         {
+            $v = field_get_items('node', $node, 'field_document_publish_date');
+            if(empty($v[0])) {
+                $langcode = field_language('node', $node, 'field_document_publish_date');
+                // When Drupal saves the form, field_document_publish_date is
+                // disabled, but still adds one element "0" to the array, saving
+                // an invalid date. Unset below to avoid this issue.
+                unset($node->field_document_publish_date[$langcode][0]);
+            }
             CMSDocument::set_pub_date($node);
         }
     }
