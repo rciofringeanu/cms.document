@@ -222,13 +222,9 @@ function _document_redirect_after_delete(&$form, &$form_state) {
     $form_state['redirect'] = 'document/listing';
 }
 
-function cms_document_node_presave($node) {
-    if ($node->type == 'document') {
-        if ((arg(0) == 'node' && is_numeric(arg(1)) && arg(1) == $node->nid)
-            || (arg(0) == 'node' && arg(1) == 'add' && arg(2) == 'document'))
-        {
+function cms_country_node_presave($node) {
+    if ($node->type == 'document' && $node->op == 'Save') {
             CMSDocument::set_pub_date($node);
-        }
     }
 }
 
@@ -418,6 +414,7 @@ class CMSDocument extends CMSBase {
      **/
     public static function set_pub_date(&$node)
     {
+        dpm($node);
         $modified = FALSE;
         if(!empty($node->field_document_files)){
             if (empty($node->field_document_publish_date[$node->language][0]['value'])) {
