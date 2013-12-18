@@ -222,6 +222,7 @@ function _document_redirect_after_delete(&$form, &$form_state) {
     $form_state['redirect'] = 'document/listing';
 }
 
+
 function cms_document_node_presave($node) {
     if ($node->type == 'document') {
         if ((arg(0) == 'node' && is_numeric(arg(1)) && arg(1) == $node->nid)
@@ -235,10 +236,6 @@ function cms_document_node_presave($node) {
                 // an invalid date. Unset below to avoid this issue.
                 unset($node->field_document_publish_date[$langcode][0]);
             }
-            CMSDocument::set_pub_date($node);
-        }
-    }
-}
 
 /**
  * Implements hook_field_extra_fields()
@@ -426,6 +423,7 @@ class CMSDocument extends CMSBase {
      **/
     public static function set_pub_date(&$node)
     {
+        dpm($node);
         $modified = FALSE;
         if(!empty($node->field_document_files)){
             $min_date = date('Y-m-d H:i:s',strtotime('+10 year',time()));

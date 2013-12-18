@@ -263,7 +263,7 @@ function cms_document_views_default_views() {
   $handler = $view->new_display('views_data_export', 'Data export', 'document_export');
   $handler->display->display_options['pager']['type'] = 'some';
   $handler->display->display_options['style_plugin'] = 'views_data_export_csv';
-  $handler->display->display_options['path'] = 'document/export';
+  $handler->display->display_options['path'] = 'manage/document/export';
 
   /* Display: Publication's Plans */
   $handler = $view->new_display('page', 'Publication\'s Plans', 'publication_plans');
