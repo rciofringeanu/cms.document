@@ -89,6 +89,9 @@ function cms_document_strongarm() {
         'title' => array(
           'weight' => '0',
         ),
+        'path' => array(
+          'weight' => '13',
+        ),
       ),
       'display' => array(),
     ),
