@@ -1,7 +1,7 @@
 name = CMS Document
 core = 7.x
 package = CMS
-version = 7.x-2.7
+version = 7.x-2.8
 project = cms_document
 dependencies[] = cms_instrument
 dependencies[] = field_collection

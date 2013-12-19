@@ -95,6 +95,10 @@ function cms_document_field_default_field_instances() {
           'link' => FALSE,
         ),
         'type' => 'entityreference_label',
+        'label' => 'inline',
+        'module' => 'cms',
+        'settings' => array(),
+        'type' => 'cms_country_table_row_formatter',
         'weight' => 16,
       ),
       'teaser' => array(
