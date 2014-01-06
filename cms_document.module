@@ -237,6 +237,7 @@ function cms_document_node_presave($node) {
                 unset($node->field_document_publish_date[$langcode][0]);
             }
 
+
 /**
  * Implements hook_field_extra_fields()
  *
