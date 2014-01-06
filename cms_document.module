@@ -424,7 +424,6 @@ class CMSDocument extends CMSBase {
      **/
     public static function set_pub_date(&$node)
     {
-        dpm($node);
         $modified = FALSE;
         if(!empty($node->field_document_files)){
             $min_date = date('Y-m-d H:i:s',strtotime('+10 year',time()));
