@@ -424,13 +424,14 @@ class CMSDocument extends CMSBase {
      **/
     public static function set_pub_date(&$node)
     {
+        $langcode = field_language('node', $node, 'field_document_publish_date');
         $modified = FALSE;
         if(!empty($node->field_document_files)){
             $min_date = date('Y-m-d H:i:s',strtotime('+10 year',time()));
-            if (!empty($node->field_document_files[$node->language])) {
-                foreach ($node->field_document_files[$node->language] as $file) {
-                    if (!empty($file['field_document_file_publish_date'][$node->language][0]['value'])) {
-                        $date = $file['field_document_file_publish_date'][$node->language][0]['value'];
+            if (!empty($node->field_document_files[$langcode])) {
+                foreach ($node->field_document_files[$langcode] as $file) {
+                    if (!empty($file['field_document_file_publish_date'][$langcode][0]['value'])) {
+                        $date = $file['field_document_file_publish_date'][$langcode][0]['value'];
                         if (!empty($date) && strtotime($min_date) > strtotime($date)) {
                             $min_date = $date;
                             $modified = TRUE;
@@ -438,7 +439,7 @@ class CMSDocument extends CMSBase {
                     }
                 }
                 if ($modified) {
-                    $node->field_document_publish_date[$node->language][0]['value'] = $min_date;
+                    $node->field_document_publish_date[$langcode][0]['value'] = $min_date;
                 }
             }
         }
